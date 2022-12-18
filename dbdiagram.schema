@@ -1,0 +1,121 @@
+
+Table "abbonamento" {
+  "id" int [pk, not null]
+  "costo" int [not null]
+  "nome" varchar [not null]
+  "mesi_durata" int [not null]
+  "ingressi_settimanali" int [not null]
+}
+
+Table "iscritto" {
+  "codice_fiscale" int [pk, not null]
+  "nome" varchar [not null]
+  "cognome" varchar [not null]
+  "eta" int [not null]
+  "residenza" varchar [not null]
+  "data_nascita" varchar [not null]
+  "data_inizio_abbonamento" varchar [not null]
+  "id_abbonamento" int
+  "id_palestra" int
+}
+
+Table "palestra" {
+  "id" int [pk, not null]
+  "nome" varchar [not null]
+  "sede" varchar [not null]
+  "sala_pesi" bool [not null]
+}
+
+Table "attrezzo" {
+  "id" varchar [pk, not null]
+  "nome" varchar [not null]
+  "data_arrivo" varchar [not null]
+  "id_palestra" int
+}
+
+Table "dipendente" {
+  "codice_fiscale" int [pk, not null]
+  "nome" varchar [not null]
+  "cognome" varchar [not null]
+  "eta" int [not null]
+  "stipendio" float4 [not null]
+  "id_lavoro" varchar
+  "id_palestra" int
+}
+
+Table "corso" {
+  "nome" varchar [pk, not null]
+}
+
+Table "giorno" {
+  "nome" varchar [pk, not null]
+}
+
+Table "lavoro" {
+  "nome" varchar [pk, not null]
+}
+
+Table "palestra_abbonamento" {
+  "palestra_id" int
+  "abbonamento_id" int
+
+Indexes {
+  (palestra_id, abbonamento_id) [pk]
+}
+}
+
+Table "palestra_corso" {
+  "specifico_id" int [unique]
+  "palestra_id" int
+  "corso_nome" varchar
+
+Indexes {
+  (palestra_id, corso_nome) [pk]
+}
+}
+
+Table "giorno_corsospecifico" {
+  "giorno_id" varchar
+  "specifico_id" int
+  "ora_inizio" varchar [not null]
+  "ora_fine" varchar [not null]
+
+Indexes {
+  (giorno_id, specifico_id) [pk]
+}
+}
+
+Table "corso_dipendente" {
+  "corso_nome" varchar
+  "dipendente_codice_fiscale" int
+
+Indexes {
+  (corso_nome, dipendente_codice_fiscale) [pk]
+}
+}
+
+Ref:"abbonamento"."id" < "iscritto"."id_abbonamento"
+
+Ref:"palestra"."id" < "attrezzo"."id_palestra"
+
+Ref:"palestra"."id" < "iscritto"."id_palestra"
+
+Ref:"palestra"."id" < "palestra_abbonamento"."palestra_id"
+
+Ref:"abbonamento"."id" < "palestra_abbonamento"."abbonamento_id"
+
+Ref:"palestra"."id" < "palestra_corso"."palestra_id"
+
+Ref:"corso"."nome" < "palestra_corso"."corso_nome"
+
+Ref:"lavoro"."nome" < "dipendente"."id_lavoro"
+
+Ref:"palestra"."id" < "dipendente"."id_palestra"
+
+Ref:"corso"."nome" < "corso_dipendente"."corso_nome"
+
+Ref:"dipendente"."codice_fiscale" < "corso_dipendente"."dipendente_codice_fiscale"
+
+Ref:"giorno"."nome" < "giorno_corsospecifico"."giorno_id"
+
+Ref:"palestra_corso"."specifico_id" < "giorno_corsospecifico"."specifico_id"
